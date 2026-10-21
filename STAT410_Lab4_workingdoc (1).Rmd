@@ -1,0 +1,125 @@
+---
+title: "STAT 410 Lab 4: Simple Linear Regression on Data You Choose"
+author: "Team members: (list everyone's full name here)"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(MASS)   # comes with R; needed for several datasets and boxcox()
+```
+
+*See the Lab Session 4 Worksheet for the dataset options and what to answer in each section. Write your code in the chunks and your answers under each "Answer:". The comments in each chunk are hints; delete them or keep them as you like.*
+
+# 1. Your question
+
+```{r data}
+# Load your dataset
+
+
+```
+
+**Dataset, variables, and question:**
+
+# 2. Explore the data
+
+```{r explore}
+# View(dat)        # spreadsheet view; run in the console, not when knitting
+# str(dat), head(dat), nrow(dat)
+# get variables descriptives
+
+# scatterplot
+
+
+```
+
+**Answer:**
+
+# 3. Fit the model
+
+```{r fit}
+# fit linear regression model
+
+# 95% confidence intervals for the coefficients
+
+# add the fitted line to your scatterplot
+
+```
+
+**Answer:**
+
+# 4. Confidence and prediction intervals
+
+```{r intervals}
+
+
+```
+
+**Answer:**
+
+# 5. R² and ANOVA
+
+```{r anova}
+
+
+```
+
+**Answer:**
+
+# 6. Residual diagnostics
+
+```{r diagnostics}
+# four diagnostic plots
+
+
+```
+
+**Answer:**
+
+# 7. Transformation
+
+```{r transformation}
+# Step 1: Does the response need a transformation? Box-Cox (requires y > 0):
+#   boxcox(fit)
+#   Read lambda as: 1 -> no change, 0.5 -> sqrt(y), 0 -> log(y), -1 -> 1/y
+#   If the CI contains 1, a transformation of y may not be needed.
+#
+# Step 2: Box-Cox only covers y. If the scatterplot or residual plot is curved,
+#   also consider transforming x: log(x), sqrt(x), 1/x  (log needs x > 0)
+#
+# Step 3: Fit the transformed model. You can transform inside lm():
+#   fit_t <- lm(log(y) ~ x, data = dat)
+#   fit_t <- lm(y ~ log(x), data = dat)
+#   fit_t <- lm(log(y) ~ log(x), data = dat)
+#   fit_t <- lm(sqrt(y) ~ x, data = dat)
+#   fit_t <- lm(I(1/y) ~ x, data = dat)    # wrap arithmetic like 1/y in I()
+#
+# Step 4: Compare residuals vs fitted for fit and fit_t, e.g.
+#   plot(fitted(fit_t), resid(fit_t)); abline(h = 0)
+#   R^2 is only comparable if y is NOT transformed; otherwise compare residual plots.
+#
+# Interpreting slopes after logs:
+#   log(y) ~ x       : +1 in x multiplies y by about exp(b1)
+#   log(y) ~ log(x)  : +1% in x changes y by about b1 %
+#   y ~ log(x)       : doubling x changes y by b1 * log(2)
+
+```
+
+**Answer:**
+
+# 8. Wrap-up
+
+**Answer (3–5 sentences: your answer to the question, the key estimate with its uncertainty, how well the model fits, one limitation):**
+
+# Bonus: Bootstrap the slope
+
+```{r bootstrap}
+# Pairs bootstrap: resample ROWS of your data with replacement, refit, keep the slope.
+
+
+```
+
+**Answer (how do the bootstrap and t-based intervals compare, and why might they differ?):**
