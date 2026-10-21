@@ -63,7 +63,10 @@ library(MASS)   # comes with R; needed for several datasets and boxcox()
 # 5. R² and ANOVA
 
 ```{r anova}
-
+a <- anova(fit)
+SSR <- a["wt", "Sum S"]
+SSE <- a["Residuals", "Sum S"]
+c(SST = sum((mtcars$mpg-mean(mtcars$mpg))^2),SSR_SSE = SSR+SSE)
 
 ```
 
