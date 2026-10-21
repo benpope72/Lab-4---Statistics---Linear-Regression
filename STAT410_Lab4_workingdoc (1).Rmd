@@ -67,7 +67,7 @@ a <- anova(fit)
 SSR <- a["wt", "Sum S"]
 SSE <- a["Residuals", "Sum S"]
 c(SST = sum((mtcars$mpg-mean(mtcars$mpg))^2),SSR_SSE = SSR+SSE)
-
+c(F=a["wt","F value"], t2=coef(summary(fit))["wt","t value"]^2)
 ```
 
 **Answer:**
