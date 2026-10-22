@@ -156,7 +156,7 @@ par(mfrow=c(1,1))
 
 # 8. Wrap-up
 
-**Answer (3–5 sentences: your answer to the question, the key estimate with its uncertainty, how well the model fits, one limitation):**
+**Answer (3–5 sentences: your answer to the question, the key estimate with its uncertainty, how well the model fits, one limitation):** Heavier cars get worse mileage because of our negative slope. Cars lose about 5.3 gallons per a thousand pounds. a limitation is that the observational data only contains about 30 cars which is a relatively small sample. Our data is also based on the twentieth century so it may not be applicable for mileage per kilogram in cars nowadays.
 
 # Bonus: Bootstrap the slope
 
