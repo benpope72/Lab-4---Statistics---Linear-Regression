@@ -86,39 +86,33 @@ predict(fitted_model, newdata = single_car, interval = "prediction")
 
 **Answer:** The 95% confidence interval (18.40825, 20.62126) says that we are 95% confident the population mean value of mpg is within the bounds with repeated testing and sampling. The 95% prediction interval (13.19659, 25.83293) means we are 95% confident under repeated testing and sampling that the true mpg for a new car with a median weight of 3,325 lbs is within those bounds. The prediction interval is wider since it has to include the noise that comes from an additional car and accounts for individual variance among cars.
 
-
 # 5. R² and ANOVA
 
 ```{r anova}
-a <- anova(fit)
-SSR <- a["wt", "Sum S"]
-SSE <- a["Residuals", "Sum S"]
+a <- anova(fitted_model)
+SSR <- a["wt", "Sum Sq"]
+SSE <- a["Residuals", "Sum Sq"]
 c(SST = sum((mtcars$mpg-mean(mtcars$mpg))^2),SSR_SSE = SSR+SSE)
-c(F=a["wt","F value"], t2=coef(summary(fit))["wt","t value"]^2)
+c(F=a["wt","F value"], t2=coef(summary(fitted_model))["wt","t value"]^2)
 ```
 
-**Answer: SSR/SST = 0.75 so the weight explains 75% of the variation in mpg.
-I also made sure SST = SSR+SSE and that F = t^2**
+**Answer: SSR/SST = 0.75 so the weight explains 75% of the variation in mpg. I also made sure SST = SSR+SSE and that F = t\^2**
 
 # 6. Residual diagnostics
 
 ```{r diagnostics}
 # four diagnostic plots
 par(mfrow=c(1,1))
-plot(fit)
+plot(fitted_model)
 par(mfrow=c(1,1))
-cd <- coks.distance(fit)
+cd <- cooks.distance(fitted_model)
 sort(cd, decreasing=TRUE)[1:3]
-fit2 <- lm(mpg ~ wt, data=mtcars[-which.max(cd),])
-summary(fit2)$coef
+fitted_model2 <- lm(mpg ~ wt, data=mtcars[-which.max(cd),])
+summary(fitted_model2)$coef
 
 ```
 
-**Answer: In the graphs, linearity shows mild curvature and there's constant
-variance. Normality also looks good. 
-I noticed that the most influential point is the Chrysler Imperial 
-because it is heavy but has high mpg for its weight. 
-Removing it changes the slope.**
+**Answer: In the graphs, linearity shows mild curvature and there's constant variance. Normality also looks good. I noticed that the most influential point is the Chrysler Imperial because it is heavy but has high mpg for its weight. Removing it changes the slope.**
 
 # 7. Transformation
 
@@ -148,28 +142,20 @@ Removing it changes the slope.**
 #   y ~ log(x)       : doubling x changes y by b1 * log(2)
 
 library(MASS)
-boxcox(fit)
+boxcox(fitted_model)
 fitlog <- lm(log(mpg) ~ wt, data=mtcars)
 summary(fitlog)
 par(mfrow=c(1,2))
-plot(fit, which=1)
+plot(fitted_model, which=1)
 plot(fitlog, which=1)
 par(mfrow=c(1,1))
 ```
 
-**Answer: When I transformed the graph to be a log model instead, it
-straightened out the plot a lot more as the regular plot was more uadratic
-shaped while the log of slightly jagged but mostly straight. The residual plot also straightened out more. The log model has R2 closer to 8 (.798) and we can now expect a 24% decrease per a thousand pounds.**
+**Answer: When I transformed the graph to be a log model instead, it straightened out the plot a lot more as the regular plot was more uadratic shaped while the log of slightly jagged but mostly straight. The residual plot also straightened out more. The log model has R2 closer to 8 (.798) and we can now expect a 24% decrease per a thousand pounds.**
 
 # 8. Wrap-up
 
-**Answer (3–5 sentences: your answer to the question, the key estimate with its uncertainty, how well the model fits, one limitation):** 
-Heavier cars get worse mileage because of our negative slope. 
-Cars lose about 5.3 gallons per a thousand pounds. 
-a limitation is that the observational data 
-only contains about 30 cars which is a relatively small sample. 
-Our data is also based on the twentieth century,
-so it may not be applicable for mileage per kilogram in cars nowadays.
+**Answer (3–5 sentences: your answer to the question, the key estimate with its uncertainty, how well the model fits, one limitation):** Heavier cars get worse mileage because of our negative slope. Cars lose about 5.3 miles per gallons per a thousand pounds. a limitation is that the observational data only contains about 30 cars which is a relatively small sample. Our data is also based on the twentieth century, so it may not be applicable for mileage per 1000 pounds in cars nowadays.
 
 # Bonus: Bootstrap the slope
 
