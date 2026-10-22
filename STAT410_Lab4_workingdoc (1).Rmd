@@ -1,6 +1,6 @@
 ---
 title: "STAT 410 Lab 4: Simple Linear Regression on Data You Choose"
-author: "Team members: (list everyone's full name here)"
+author: "Team members: Christian Contreras cac33, Benjamin Pope bkp2"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -10,6 +10,7 @@ output:
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(MASS)   # comes with R; needed for several datasets and boxcox()
+library(tidyverse) # To support analysis
 ```
 
 *See the Lab Session 4 Worksheet for the dataset options and what to answer in each section. Write your code in the chunks and your answers under each "Answer:". The comments in each chunk are hints; delete them or keep them as you like.*
@@ -18,47 +19,73 @@ library(MASS)   # comes with R; needed for several datasets and boxcox()
 
 ```{r data}
 # Load your dataset
-
-
+data(mtcars)
 ```
 
-**Dataset, variables, and question:**
+**Dataset, variables, and question:** I chose the mtcars data set, it has 11 variables and from them I chose mpg for the response variable and wt for the independent variable. The question to answer is: How much fuel efficiency do heavier cars lose?
 
 # 2. Explore the data
 
 ```{r explore}
-# View(dat)        # spreadsheet view; run in the console, not when knitting
-# str(dat), head(dat), nrow(dat)
+# View(mtcars)        # spreadsheet view; run in the console, not when knitting
+str(mtcars); head(mtcars); nrow(mtcars)
 # get variables descriptives
-
+summary(mtcars)
 # scatterplot
-
-
+mt_plot <- 
+ggplot(data = mtcars, aes(x = wt, y = mpg))+
+  geom_point()+
+  theme_minimal()+
+  labs(title = "Mileage vs. Weight",
+       x = "Weight (per 1,000 lbs)",
+       y = "Mileage (miles / gallon)")
+mt_plot
 ```
 
-**Answer:**
+**Answer:** There appears to be a strong negative association between mileage and weight. There are some unusual values like those near 2 (in 1,000 lbs) with a higher mpg around 35 but no obvious outliers, a straight line or simple linear regression would fit well to capture the direction and strength the points move in.
 
 # 3. Fit the model
 
 ```{r fit}
 # fit linear regression model
+fitted_model <- lm(mpg ~ wt, data = mtcars)
+summary(fitted_model)
 
-# 95% confidence intervals for the coefficients
+# 95% confidence intervals for the slope
+confint(fitted_model)["wt",]
+
+# Slope and intercept
+slope <- summary(fitted_model)$coefficients["wt", "Estimate"]
+slope
+
+# t-test for the slope
+t_value <- summary(fitted_model)$coefficients["wt", "t value"]
+t_value
 
 # add the fitted line to your scatterplot
-
+mt_plot <- mt_plot +
+  geom_smooth(method = "lm", se = FALSE)
+mp_plot
 ```
 
-**Answer:**
+**Answer:** The slope of -5.34 represents a change of 5.34 fewer miles per gallon for every increase in weight of 1,000 lbs. The intercept of 37.28 mpg has no practical meaning in this case since this would only apply for cars that are 0 pounds which don't exist and is outside the data's range. The slope's t value of -9.56 represents how many standard errors the estimated slope (-5.34) is hypothesized null value of 0 and is necessary in calculating the confidence interval. The p-value (1.29e-10) of the slope represents the probability of the Null Value occuring under this estimate
 
 # 4. Confidence and prediction intervals
 
 ```{r intervals}
+# Picking a meaningful x-value and making it a dataframe
+median_wt <- median(mtcars$wt)
+single_car <- data.frame(wt = median_wt)
 
+# 95% Confidence Interval for median weight
+predict(fitted_model, newdata = single_car, interval = "confidence")
 
+# 95% Prediction Interval for median weight
+predict(fitted_model, newdata = single_car, interval = "prediction")
 ```
 
-**Answer:**
+**Answer:** The 95% confidence interval (18.40825, 20.62126) that we are 95%c confident the average value of mpg is within the bounds. The 95% prediction interval (13.19659, 25.83293) predicts that there's a 95% chance the true value of the mpg for the car with a median weight of 3.325 (in 1,000 lbs) is within those bounds. The prediction interval is wider since it has to include the noise that comes from an additional car in comparison to the confidence interval.
+
 
 # 5. R² and ANOVA
 
