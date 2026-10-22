@@ -114,7 +114,11 @@ summary(fit2)$coef
 
 ```
 
-**Answer:**
+**Answer: In the graphs, linearity shows mild curvature and there's constant
+variance. Normality also looks good. 
+I noticed that the most influential point is the Chrysler Imperial 
+because it is heavy but has high mpg for its weight. 
+Removing it changes the slope.**
 
 # 7. Transformation
 
