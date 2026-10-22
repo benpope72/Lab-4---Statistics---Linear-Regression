@@ -1,6 +1,6 @@
 ---
 title: "STAT 410 Lab 4: Simple Linear Regression on Data You Choose"
-author: "Team members: Christian Contreras cac33, Benjamin Pope bkp2"
+author: "Team members: Christian Contreras (cac33), Benjamin Pope (bkp2)"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -42,7 +42,7 @@ ggplot(data = mtcars, aes(x = wt, y = mpg))+
 mt_plot
 ```
 
-**Answer:** There appears to be a strong negative association between mileage and weight. There are some unusual values like those near 2 (in 1,000 lbs) with a higher mpg around 35 but no obvious outliers, a straight line or simple linear regression would fit well to capture the direction and strength the points move in.
+**Answer:** There appears to be a strong negative association between mileage and weight. There are some unusual values like those near 2 (in 1,000 lbs) with a higher mpg around 35 but no obvious outliers. A straight line or linear regression would be a good approximation to capture the direction and strength the points move in.
 
 # 3. Fit the model
 
@@ -65,10 +65,10 @@ t_value
 # add the fitted line to your scatterplot
 mt_plot <- mt_plot +
   geom_smooth(method = "lm", se = FALSE)
-mp_plot
+mt_plot
 ```
 
-**Answer:** The slope of -5.34 represents a change of 5.34 fewer miles per gallon for every increase in weight of 1,000 lbs. The intercept of 37.28 mpg has no practical meaning in this case since this would only apply for cars that are 0 pounds which don't exist and is outside the data's range. The slope's t value of -9.56 represents how many standard errors the estimated slope (-5.34) is hypothesized null value of 0 and is necessary in calculating the confidence interval. The p-value (1.29e-10) of the slope represents the probability of the Null Value occuring under this estimate
+**Answer:** The slope of -5.34 represents a change of 5.34 fewer miles per gallon for every increase in weight of 1,000 lbs. The intercept of 37.28 mpg has no practical meaning in this case since this would only apply for cars that are 0 pounds which don't exist and is outside the data's range. The slope's t-value of -9.56 indicates that the slope is 9.56 standard errors (0.5591) below zero which is good evidence against the Null Hypothesis of a 0 slope. The p-value (1.29e-10) of the slope represents the probability of obtaining a t-value as extreme as the one observed given that the null Hypothesis is true and its small magnitude below 5% means that we can reject the null hypothesis. The confidence interval (-6.486308, -4.202635) is constructed from the estimated slope value, critical t-value, and the standard error and says we are 95% confident that the true slope value falls between -6.49 and -4.20 mpg per 1,000 lbs.
 
 # 4. Confidence and prediction intervals
 
@@ -84,7 +84,7 @@ predict(fitted_model, newdata = single_car, interval = "confidence")
 predict(fitted_model, newdata = single_car, interval = "prediction")
 ```
 
-**Answer:** The 95% confidence interval (18.40825, 20.62126) that we are 95%c confident the average value of mpg is within the bounds. The 95% prediction interval (13.19659, 25.83293) predicts that there's a 95% chance the true value of the mpg for the car with a median weight of 3.325 (in 1,000 lbs) is within those bounds. The prediction interval is wider since it has to include the noise that comes from an additional car in comparison to the confidence interval.
+**Answer:** The 95% confidence interval (18.40825, 20.62126) says that we are 95% confident the population mean value of mpg is within the bounds with repeated testing and sampling. The 95% prediction interval (13.19659, 25.83293) means we are 95% confident under repeated testing and sampling that the true mpg for a new car with a median weight of 3,325 lbs is within those bounds. The prediction interval is wider since it has to include the noise that comes from an additional car and accounts for individual variance among cars.
 
 
 # 5. R² and ANOVA
@@ -175,8 +175,25 @@ so it may not be applicable for mileage per kilogram in cars nowadays.
 
 ```{r bootstrap}
 # Pairs bootstrap: resample ROWS of your data with replacement, refit, keep the slope.
+set.seed(2026)
+# First, we resample and refit to get our data set.
+boot_slopes <- replicate(2000, {
+  sample_idx <- sample(1:nrow(mtcars), size = nrow(mtcars), replace = TRUE)
+  boot_df <- mtcars[sample_idx, ]
+  boot_model <- lm(mpg ~ wt, data = boot_df)
+  summary(boot_model)$coefficients["wt", "Estimate"]
+})
 
+# Bootstrap Confidence Interval
+boot_ci <- quantile(boot_slopes, c(0.025, 0.975))
+boot_ci
 
+# t-based confidence interval from fitted_model
+fitted_ci <- confint(fitted_model)["wt",]
+fitted_ci
+
+# Comparing confidence intervals
+rbind(Bootstrap = unname(boot_ci), T_based = unname(fitted_ci))
 ```
 
-**Answer (how do the bootstrap and t-based intervals compare, and why might they differ?):**
+**Answer (how do the bootstrap and t-based intervals compare, and why might they differ?):** The bootstrap confidence interval is (-6.850722, -4.125634), while the t-test one is (-6.486308, -4.202635). They both exclude 0, and there is only a slight difference in magnitude between the ends. The intervals differ because one relies on the t-distribution and estimated standard error, while the bootstrap estimates sampling variance through the repeated resampling of the original observations.
