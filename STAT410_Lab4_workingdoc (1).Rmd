@@ -97,7 +97,8 @@ c(SST = sum((mtcars$mpg-mean(mtcars$mpg))^2),SSR_SSE = SSR+SSE)
 c(F=a["wt","F value"], t2=coef(summary(fit))["wt","t value"]^2)
 ```
 
-**Answer:**
+**Answer: SSR/SST = 0.75 so the weight explains 75% of the variation in mpg.
+I also made sure SST = SSR+SSE and that F = t^2**
 
 # 6. Residual diagnostics
 
