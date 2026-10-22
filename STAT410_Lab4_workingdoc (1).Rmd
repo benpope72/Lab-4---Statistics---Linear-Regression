@@ -157,7 +157,9 @@ plot(fitlog, which=1)
 par(mfrow=c(1,1))
 ```
 
-**Answer:**
+**Answer: When I transformed the graph to be a log model instead, it
+straightened out the plot a lot more as the regular plot was more uadratic
+shaped while the log of slightly jagged but mostly straight. The residual plot also straightened out more. The log model has R2 closer to 8 (.798) and we can now expect a 24% decrease per a thousand pounds.**
 
 # 8. Wrap-up
 
