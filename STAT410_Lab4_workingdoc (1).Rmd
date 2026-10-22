@@ -142,6 +142,14 @@ summary(fit2)$coef
 #   log(y) ~ log(x)  : +1% in x changes y by about b1 %
 #   y ~ log(x)       : doubling x changes y by b1 * log(2)
 
+library(MASS)
+boxcox(fit)
+fitlog <- lm(log(mpg) ~ wt, data=mtcars)
+summary(fitlog)
+par(mfrow=c(1,2))
+plot(fit, which=1)
+plot(fitlog, which=1)
+par(mfrow=c(1,1))
 ```
 
 **Answer:**
