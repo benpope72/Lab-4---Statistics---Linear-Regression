@@ -104,7 +104,7 @@ I also made sure SST = SSR+SSE and that F = t^2**
 
 ```{r diagnostics}
 # four diagnostic plots
-par(mfrow=c(2,2))
+par(mfrow=c(1,1))
 plot(fit)
 par(mfrow=c(1,1))
 cd <- coks.distance(fit)
